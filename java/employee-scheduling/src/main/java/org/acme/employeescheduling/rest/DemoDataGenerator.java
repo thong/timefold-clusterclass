@@ -28,13 +28,18 @@ import org.acme.employeescheduling.domain.Shift;
 public class DemoDataGenerator {
     public enum DemoData {
         SMALL(new DemoDataParameters(
-                List.of("Ambulatory care", "Critical care", "Pediatric care"),
-                List.of("Doctor", "Nurse"),
-                List.of("Anaesthetics", "Cardiology"),
-                14,
+                List.of("Wheels", "Yarn mandalas", "Mini donuts"),
+                List.of("Student"
+                        // "Doctor", "Nurse"
+                ),
+                List.of("Enthusiasm"
+//                        "Anaesthetics", "Cardiology"
+                ),
+                3,
                 15,
-                List.of(new CountDistribution(1, 3),
-                        new CountDistribution(2, 1)
+                List.of(new CountDistribution(1, 3)
+//                        ,
+//                        new CountDistribution(2, 1)
                 ),
                 List.of(new CountDistribution(1, 0.9),
                         new CountDistribution(2, 0.1)
@@ -105,9 +110,10 @@ public class DemoDataGenerator {
     private static final LocalTime NIGHT_SHIFT_START_TIME = LocalTime.of(22, 0);
 
     static final LocalTime[][] SHIFT_START_TIMES_COMBOS = {
-            { MORNING_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME },
-            { MORNING_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME, NIGHT_SHIFT_START_TIME },
-            { MORNING_SHIFT_START_TIME, DAY_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME, NIGHT_SHIFT_START_TIME },
+            { MORNING_SHIFT_START_TIME },
+//            { MORNING_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME },
+//            { MORNING_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME, NIGHT_SHIFT_START_TIME },
+//            { MORNING_SHIFT_START_TIME, DAY_SHIFT_START_TIME, AFTERNOON_SHIFT_START_TIME, NIGHT_SHIFT_START_TIME },
     };
 
     Map<String, List<LocalTime>> locationToShiftStartTimeListMap = new HashMap<>();
