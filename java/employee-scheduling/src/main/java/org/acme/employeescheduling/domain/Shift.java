@@ -21,7 +21,7 @@ public class Shift {
     private String location;
     private String requiredSkill;
 
-    @PlanningVariable
+    @PlanningVariable(allowsUnassigned = true)
     private Employee employee;
 
     public Shift() {
@@ -110,6 +110,10 @@ public class Shift {
         return minutes > 0 ? (int) minutes : 0;
     }
 
+    public boolean hasLocation(String location) {
+        return this.location.equals(location);
+    }
+
     @Override
     public String toString() {
         return location + " " + start + "-" + end;
@@ -129,5 +133,9 @@ public class Shift {
     @Override
     public int hashCode() {
         return getId().hashCode();
+    }
+
+    public int getLocationScore(String location) {
+        return 1;
     }
 }

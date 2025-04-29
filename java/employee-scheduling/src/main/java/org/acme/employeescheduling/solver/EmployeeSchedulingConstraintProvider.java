@@ -36,14 +36,15 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 // Hard constraints
-                requiredSkill(constraintFactory),
+//                requiredSkill(constraintFactory),
                 noOverlappingShifts(constraintFactory),
-                atLeast10HoursBetweenTwoShifts(constraintFactory),
+//                atLeast10HoursBetweenTwoShifts(constraintFactory),
                 oneShiftPerDay(constraintFactory),
                 unavailableEmployee(constraintFactory),
                 // Soft constraints
-                undesiredDayForEmployee(constraintFactory),
-                desiredDayForEmployee(constraintFactory),
+//                undesiredDayForEmployee(constraintFactory),
+//                desiredDayForEmployee(constraintFactory),
+                desiredLocationForEmployee(constraintFactory),
                 balanceEmployeeShiftAssignments(constraintFactory)
         };
     }
@@ -99,6 +100,15 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .filter(Shift::isOverlappingWithDate)
                 .penalize(HardSoftBigDecimalScore.ONE_SOFT, Shift::getOverlappingDurationInMinutes)
                 .asConstraint("Undesired day for employee");
+    }
+
+    Constraint desiredLocationForEmployee(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Shift.class)
+                .join(Employee.class, equal(Shift::getEmployee, Function.identity()))
+                .flattenLast(Employee::getDesiredLocations)
+                .filter(Shift::hasLocation)
+                .reward(HardSoftBigDecimalScore.ONE_SOFT, Shift::getLocationScore)
+                .asConstraint("Desired location for employee");
     }
 
     Constraint desiredDayForEmployee(ConstraintFactory constraintFactory) {

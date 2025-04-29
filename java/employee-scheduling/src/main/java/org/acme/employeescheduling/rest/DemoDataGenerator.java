@@ -32,22 +32,24 @@ public class DemoDataGenerator {
                 List.of("Student"
                         // "Doctor", "Nurse"
                 ),
-                List.of("Enthusiasm"
+                List.of("Student"
 //                        "Anaesthetics", "Cardiology"
                 ),
                 3,
-                15,
-                List.of(new CountDistribution(1, 3)
+                5,
+                List.of(new CountDistribution(1, 1)
 //                        ,
 //                        new CountDistribution(2, 1)
                 ),
-                List.of(new CountDistribution(1, 0.9),
-                        new CountDistribution(2, 0.1)
+                List.of(new CountDistribution(3, 1)
+//                        ,
+//                        new CountDistribution(2, 0.1)
                 ),
-                List.of(new CountDistribution(1, 4),
-                        new CountDistribution(2, 3),
-                        new CountDistribution(3, 2),
-                        new CountDistribution(4, 1)
+                List.of(new CountDistribution(5, 1)
+//                        ,
+//                        new CountDistribution(2, 3),
+//                        new CountDistribution(3, 2),
+//                        new CountDistribution(4, 1)
                 ),
                 0
         )),
@@ -103,8 +105,8 @@ public class DemoDataGenerator {
 
     private static final String[] FIRST_NAMES = { "Amy", "Beth", "Carl", "Dan", "Elsa", "Flo", "Gus", "Hugo", "Ivy", "Jay" };
     private static final String[] LAST_NAMES = { "Cole", "Fox", "Green", "Jones", "King", "Li", "Poe", "Rye", "Smith", "Watt" };
-    private static final Duration SHIFT_LENGTH = Duration.ofHours(8);
-    private static final LocalTime MORNING_SHIFT_START_TIME = LocalTime.of(6, 0);
+    private static final Duration SHIFT_LENGTH = Duration.ofHours(16);
+    private static final LocalTime MORNING_SHIFT_START_TIME = LocalTime.of(0, 0);
     private static final LocalTime DAY_SHIFT_START_TIME = LocalTime.of(9, 0);
     private static final LocalTime AFTERNOON_SHIFT_START_TIME = LocalTime.of(14, 0);
     private static final LocalTime NIGHT_SHIFT_START_TIME = LocalTime.of(22, 0);
@@ -142,22 +144,31 @@ public class DemoDataGenerator {
         for (int i = 0; i < parameters.employeeCount; i++) {
             Set<String> skills = pickSubset(parameters.optionalSkills, random, parameters.optionalSkillDistribution);
             skills.add(pickRandom(parameters.requiredSkills, random));
-            Employee employee = new Employee(namePermutations.get(i), skills, new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
+            Employee employee = new Employee(namePermutations.get(i), skills, new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
             employees.add(employee);
         }
         employeeSchedule.setEmployees(employees);
 
         List<Shift> shifts = new LinkedList<>();
+        for (Employee employee : employees) {
+            for (String location : parameters.locations) {
+                switch (random.nextInt(2)) {
+                    case 0 -> employee.getDesiredLocations().add(location);
+                }
+            }
+        }
+
         for (int i = 0; i < parameters.daysInSchedule; i++) {
             Set<Employee> employeesWithAvailabilitiesOnDay = pickSubset(employees, random,
                     parameters.availabilityCountDistribution);
             LocalDate date = startDate.plusDays(i);
             for (Employee employee : employeesWithAvailabilitiesOnDay) {
-                switch (random.nextInt(3)) {
-                    case 0 -> employee.getUnavailableDates().add(date);
-                    case 1 -> employee.getUndesiredDates().add(date);
-                    case 2 -> employee.getDesiredDates().add(date);
-                }
+//                switch (random.nextInt(3)) {
+//                    case 0 -> employee.getUnavailableDates().add(date);
+//                    case 1 -> employee.getUndesiredDates().add(date);
+//                    case 2 -> employee.getDesiredDates().add(date);
+//                }
+                employee.getDesiredDates().add(date);
             }
             shifts.addAll(generateShiftsForDay(parameters, date, random));
         }

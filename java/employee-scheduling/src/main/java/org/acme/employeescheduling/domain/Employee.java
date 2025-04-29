@@ -14,18 +14,21 @@ public class Employee {
     private Set<LocalDate> unavailableDates;
     private Set<LocalDate> undesiredDates;
     private Set<LocalDate> desiredDates;
+    private Set<String> desiredLocations;
 
     public Employee() {
 
     }
 
     public Employee(String name, Set<String> skills,
-        Set<LocalDate> unavailableDates, Set<LocalDate> undesiredDates, Set<LocalDate> desiredDates) {
+        Set<LocalDate> unavailableDates, Set<LocalDate> undesiredDates, Set<LocalDate> desiredDates,
+                    Set<String> desiredLocations) {
         this.name = name;
         this.skills = skills;
         this.unavailableDates = unavailableDates;
         this.undesiredDates = undesiredDates;
         this.desiredDates = desiredDates;
+        this.desiredLocations = desiredLocations;
     }
 
     public String getName() {
@@ -66,6 +69,14 @@ public class Employee {
 
     public void setDesiredDates(Set<LocalDate> desiredDates) {
         this.desiredDates = desiredDates;
+    }
+
+    public Set<String> getDesiredLocations() {
+        return desiredLocations;
+    }
+
+    public void setDesiredLocations(Set<String> desiredLocations) {
+        this.desiredLocations = desiredLocations;
     }
 
     @Override
