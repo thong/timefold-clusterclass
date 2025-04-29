@@ -1,6 +1,7 @@
 package org.acme.employeescheduling.domain;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,6 +19,11 @@ public class Employee {
 
     public Employee() {
 
+    }
+
+    public Employee(String name, Set<String> skills,
+                    Set<LocalDate> unavailableDates, Set<LocalDate> undesiredDates, Set<LocalDate> desiredDates) {
+        this(name, skills, unavailableDates, undesiredDates, desiredDates, new LinkedHashSet<>());
     }
 
     public Employee(String name, Set<String> skills,
