@@ -37,7 +37,8 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
         return new Constraint[] {
                 // Hard constraints
 //                requiredSkill(constraintFactory),
-                noOverlappingShifts(constraintFactory),
+//                noOverlappingShifts(constraintFactory),
+                noRepeatedLocations(constraintFactory),
 //                atLeast10HoursBetweenTwoShifts(constraintFactory),
                 oneShiftPerDay(constraintFactory),
                 unavailableEmployee(constraintFactory),
@@ -62,6 +63,13 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .penalize(HardSoftBigDecimalScore.ONE_HARD,
                         EmployeeSchedulingConstraintProvider::getMinuteOverlap)
                 .asConstraint("Overlapping shift");
+    }
+
+    Constraint noRepeatedLocations(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEachUniquePair(Shift.class, equal(Shift::getEmployee),
+                        equal(Shift::getLocation))
+                .penalize(HardSoftBigDecimalScore.ONE_HARD)
+                .asConstraint("Repeated location");
     }
 
     Constraint atLeast10HoursBetweenTwoShifts(ConstraintFactory constraintFactory) {
