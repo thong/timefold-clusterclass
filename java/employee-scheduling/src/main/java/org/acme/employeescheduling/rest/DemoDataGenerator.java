@@ -28,7 +28,7 @@ import org.acme.employeescheduling.domain.Shift;
 public class DemoDataGenerator {
     public enum DemoData {
         SMALL(new DemoDataParameters(
-                List.of("Wheels", "Yarn mandalas", "Mini donuts"),
+                List.of("Wheels", "Yarn mandalas", "Mini donuts", "Ultimate frisbee"),
                 List.of("Student"
                         // "Doctor", "Nurse"
                 ),
@@ -182,11 +182,13 @@ public class DemoDataGenerator {
     private List<Shift> generateShiftsForDay(DemoDataParameters parameters, LocalDate date, Random random) {
         List<Shift> shifts = new LinkedList<>();
         for (String location : parameters.locations) {
-            List<LocalTime> shiftStartTimes = locationToShiftStartTimeListMap.get(location);
-            for (LocalTime shiftStartTime : shiftStartTimes) {
-                LocalDateTime shiftStartDateTime = date.atTime(shiftStartTime);
-                LocalDateTime shiftEndDateTime = shiftStartDateTime.plus(SHIFT_LENGTH);
-                shifts.addAll(generateShiftForTimeslot(parameters, shiftStartDateTime, shiftEndDateTime, location, random));
+            if (random.nextInt(2) == 0) {
+                List<LocalTime> shiftStartTimes = locationToShiftStartTimeListMap.get(location);
+                for (LocalTime shiftStartTime : shiftStartTimes) {
+                    LocalDateTime shiftStartDateTime = date.atTime(shiftStartTime);
+                    LocalDateTime shiftEndDateTime = shiftStartDateTime.plus(SHIFT_LENGTH);
+                    shifts.addAll(generateShiftForTimeslot(parameters, shiftStartDateTime, shiftEndDateTime, location, random));
+                }
             }
         }
         return shifts;
