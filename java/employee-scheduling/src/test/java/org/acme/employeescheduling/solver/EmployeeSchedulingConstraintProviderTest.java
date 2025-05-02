@@ -21,6 +21,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 class EmployeeSchedulingConstraintProviderTest {
     private static final LocalDate DAY_1 = LocalDate.of(2021, 2, 1);
+    private static final LocalDate DAY_2 = LocalDate.of(2021, 2, 2);
     private static final LocalDate DAY_3 = LocalDate.of(2021, 2, 3);
 
     private static final LocalDateTime DAY_START_TIME = DAY_1.atTime(LocalTime.of(9, 0));
@@ -155,6 +156,40 @@ class EmployeeSchedulingConstraintProviderTest {
                 .given(employee1, employee2,
                         new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee2))
                 .penalizes(0);
+    }
+
+    @Test
+    void allDaysAssigned() {
+        Employee employee1 = new Employee("Amy", null, Set.of(DAY_2, DAY_3), null, null);
+        Employee employee2 = new Employee("Beth", null, Set.of(), null, null);
+        constraintVerifier.verifyThat(EmployeeSchedulingConstraintProvider::allDaysAssigned)
+                .given(employee1,
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee1))
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(EmployeeSchedulingConstraintProvider::allDaysAssigned)
+                .given(employee2,
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee2))
+                .penalizesBy(2);
+    }
+
+    @Test
+    void maxClassSize() {
+        Employee employee1 = new Employee("Amy", null, Set.of(DAY_2, DAY_3), null, null);
+        Employee employee2 = new Employee("Beth", null, Set.of(), null, null);
+        Employee employee3 = new Employee("Charles", null, Set.of(), null, null);
+        constraintVerifier.verifyThat(EmployeeSchedulingConstraintProvider::maxClassSize)
+                .given(employee1, employee2,
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee1),
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee2)
+                        )
+                .penalizesBy(0);
+        constraintVerifier.verifyThat(EmployeeSchedulingConstraintProvider::maxClassSize)
+                .given(employee1, employee2, employee3,
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee1, 0, 1),
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee2, 0, 1),
+                        new Shift("1", DAY_START_TIME, DAY_END_TIME, "Location", "Skill", employee3, 0, 1)
+                )
+                .penalizesBy(2);
     }
 
     @Test

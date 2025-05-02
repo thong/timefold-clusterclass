@@ -20,6 +20,8 @@ public class Shift {
 
     private String location;
     private String requiredSkill;
+    private int minSize;
+    private int maxSize;
 
     @PlanningVariable(allowsUnassigned = true)
     private Employee employee;
@@ -36,12 +38,18 @@ public class Shift {
     }
 
     public Shift(String id, LocalDateTime start, LocalDateTime end, String location, String requiredSkill, Employee employee) {
+        this(id, start, end, location, requiredSkill, employee, 0, 0);
+    }
+
+    public Shift(String id, LocalDateTime start, LocalDateTime end, String location, String requiredSkill, Employee employee, int minSize, int maxSize) {
         this.id = id;
         this.start = start;
         this.end = end;
         this.location = location;
         this.requiredSkill = requiredSkill;
         this.employee = employee;
+        this.minSize = minSize;
+        this.maxSize = maxSize;
     }
 
     public String getId() {
@@ -74,6 +82,22 @@ public class Shift {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public int getMinSize() {
+        return minSize;
+    }
+
+    public void setMinSize(int minSize) {
+        this.minSize = minSize;
+    }
+
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
     }
 
     public String getRequiredSkill() {

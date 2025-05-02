@@ -4,6 +4,7 @@ import static ai.timefold.solver.core.api.score.stream.Joiners.equal;
 import static ai.timefold.solver.core.api.score.stream.Joiners.lessThanOrEqual;
 import static ai.timefold.solver.core.api.score.stream.Joiners.overlapping;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.function.Function;
@@ -42,6 +43,8 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
 //                atLeast10HoursBetweenTwoShifts(constraintFactory),
                 oneShiftPerDay(constraintFactory),
                 unavailableEmployee(constraintFactory),
+                allDaysAssigned(constraintFactory),
+                maxClassSize(constraintFactory),
                 // Soft constraints
 //                undesiredDayForEmployee(constraintFactory),
 //                desiredDayForEmployee(constraintFactory),
@@ -99,6 +102,27 @@ public class EmployeeSchedulingConstraintProvider implements ConstraintProvider 
                 .filter(Shift::isOverlappingWithDate)
                 .penalize(HardSoftBigDecimalScore.ONE_HARD, Shift::getOverlappingDurationInMinutes)
                 .asConstraint("Unavailable employee");
+    }
+
+    Constraint allDaysAssigned(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Shift.class)
+                .groupBy(Shift::getEmployee, ConstraintCollectors.count())
+                .penalize(HardSoftBigDecimalScore.ONE_HARD, ((employee, shiftCount) -> {
+                    // count number of available, unassigned days
+                    int unassignedCount = 3 - employee.getUnavailableDates().size() - shiftCount;
+                    return Math.max(0, unassignedCount);
+                }))
+                .asConstraint("Shift assigned on every day employee is available");
+    }
+
+    Constraint maxClassSize(ConstraintFactory constraintFactory) {
+        return constraintFactory.forEach(Shift.class)
+                .groupBy(Shift::getId, ConstraintCollectors.toList())
+                .penalize(HardSoftBigDecimalScore.ONE_HARD, ((shiftId, shifts) -> {
+                    int maxSize = shifts.get(0).getMaxSize();
+                    return maxSize == 0 ? 0 : Math.max(0, shifts.size() - maxSize);
+                }))
+                .asConstraint("Maximum class size");
     }
 
     Constraint undesiredDayForEmployee(ConstraintFactory constraintFactory) {
